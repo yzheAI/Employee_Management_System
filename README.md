@@ -12,6 +12,7 @@
 - 项目采用分层架构设计（API / Service / DB / Models / Core），实现了学生信息管理、用户认证与基础权限控制，并具备较好的可扩展性与工程化设计能力。
 - 支持日志记录与错误追踪
 - 实现 JWT 用户认证与基础 RBAC 权限控制
+- 扩展多业务模块（Student/User/Announcement）
 
 ---
 
@@ -38,6 +39,24 @@
 - admin 用户可进行增删改操作
 - 普通用户仅可查询数据
 
+
+
+### Student 模块
+- 学生信息增删改查（CRUD）
+- 数据校验与结构化返回
+
+### User 模块
+- 用户注册 / 登录
+- JWT 身份认证
+- 密码加密（bcrypt）
+- 权限控制（admin / user）
+
+### Announcement 模块（新增）
+- 公告发布
+- 公告列表查询
+- 单条公告查询
+- 公告删除
+
 ---
 
 ## 技术栈
@@ -57,34 +76,39 @@
 
 ```text
 Student_Manager/
-├── .venv/                          
 ├── app/
-│   ├── api/
-│   │   ├── student_api.py          
-│   │   └── user_api.py             
-│   ├── config/
-│   │   ├── jwt.py                 
-│   │   └── setting.py              
-│   ├── core/
-│   │   ├── logger.py             
-│   │   ├── response.py            
-│   │   └── security.py           
-│   ├── db/
-│   │   ├── crud.py                 
-│   │   └── session.py          
-│   ├── models/
-│   │   ├── student.py            
-│   │   └── user.py             
-│   ├── schemas/
-│   │   ├── response_schema.py   
-│   │   ├── student_schema.py     
-│   │   └── user_schema.py         
-│   ├── service/                   
-│   └── .env                       
-├── logs/                      
-├── .gitignore                     
-├── main.py                        
-├── README.md                    
-├── students.db                   
-├── temp.py                       
-└── test.html                                    
+│   ├── api/                 # API路由层
+│   │   ├── student_api.py
+│   │   ├── user_api.py
+│   │   └── announce_api.py
+│   │
+│   ├── config/              # 配置层
+│   │   ├── jwt.py
+│   │   └── setting.py
+│   │
+│   ├── core/                # 核心工具层
+│   │   ├── logger.py
+│   │   ├── response.py
+│   │   └── security.py
+│   │
+│   ├── db/                  # 数据库层
+│   │   ├── crud.py
+│   │   └── session.py
+│   │
+│   ├── models/              # ORM模型层
+│   │   ├── student.py
+│   │   ├── user.py
+│   │   └── announcement.py
+│   │
+│   ├── schemas/             # Pydantic模型层
+│   │   ├── student_schema.py
+│   │   ├── user_schema.py
+│   │   ├── response_schema.py
+│   │   └── announcement_schema.py
+│   │
+│   ├── service/             # 业务逻辑层（预留扩展）
+│   └── .env
+│
+├── logs/
+├── main.py
+├── README.md                                    
