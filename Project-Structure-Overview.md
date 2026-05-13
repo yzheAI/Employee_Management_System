@@ -32,7 +32,7 @@ app/
 路由接口层：
     定义接口路由，接受前端传来的请求
     进行参数校验（Field），调用业务逻辑（crud）
-    返回统一响应结果（如：ResponseModel(StudentResponse)）
+    返回统一响应结果（如：ResponseModel[StudentResponse]）
 
     student_api.py:
         使用FastAPI管理路由

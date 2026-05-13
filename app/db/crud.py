@@ -1,6 +1,8 @@
+from app.models.announcement import Announcement
 from app.models.student import Student
 from app.models.user import User
 from sqlalchemy.orm import Session
+from datetime import datetime
 import bcrypt
 
 
@@ -66,3 +68,35 @@ def get_user(db: Session, username: str):
 def verify_user(plain_password, hashed_password):
     return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
+
+def announce_create(db: Session, title: str, content: str, author: str):
+    now = str(datetime.utcnow())
+    announcement = Announcement(
+        title=title,
+        content=content,
+        author=author,
+        date=now
+    )
+    db.add(announcement)
+    db.commit()
+    db.refresh(announcement)
+    return announcement
+
+
+def announce_find(db: Session, title: str):
+    announce = db.query(Announcement).filter(Announcement.title == title).first()
+    return announce
+
+
+def announce_show_all(db: Session):
+    announces = db.query(Announcement).all()
+    return announces
+
+
+def announce_delete(db: Session, announce_id) -> bool:
+    announce = announce_find(db, announce_id)
+    if not announce:
+        return False
+    db.delete(announce)
+    db.commit()
+    return True
