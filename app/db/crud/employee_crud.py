@@ -6,8 +6,6 @@ from app.models.employee import Employee
 
 
 def employee_create(db: Session, name: str, age: int, gender: str, department_id: int, role: str):
-    if db.query(Employee).filter(Employee.name == name).first():
-        return error(400, message="Employee already exists")
     if not db.query(Department).filter(Department.id == department_id).first():
         return error(404, "Department not found")
     employee = Employee(name=name, age=age, gender=gender, department_id=department_id, role=role)

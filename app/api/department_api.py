@@ -31,7 +31,7 @@ async def get_all_departments(
     return success([DepartmentResponse.model_validate(i) for i in d])
 
 
-@department_router.get('/find/{id}', response_model=ResponseModel[DepartmentResponse], summary="查询部门")
+@department_router.get('/find/{department_id}', response_model=ResponseModel[DepartmentResponse], summary="查询部门")
 async def get_department(
         department_id: int,
         db: Session = Depends(get_db),
@@ -41,7 +41,7 @@ async def get_department(
     return success(DepartmentResponse.model_validate(d))
 
 
-@department_router.delete('/delete/{id}', response_model=ResponseModel, summary="删除部门")
+@department_router.delete('/delete/{department_id}', response_model=ResponseModel, summary="删除部门")
 async def delete_department(
         d_id: int,
         db: Session = Depends(get_db),

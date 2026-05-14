@@ -32,8 +32,8 @@ def announce_show_all(db: Session):
     return announces
 
 
-def announce_delete(db: Session, announce_id) -> bool:
-    announce = announce_find(db, announce_id)
+def announce_delete(db: Session, title) -> bool:
+    announce = announce_find(db, title)
     if not announce:
         return False
     db.delete(announce)

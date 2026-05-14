@@ -21,7 +21,7 @@ async def employee_register(
     return success(EmployeeResponse.model_validate(e))
 
 
-@employee_router.get("/find/{id}", response_model=ResponseModel[EmployeeResponse], summary="查找员工")
+@employee_router.get("/find/{employee_id}", response_model=ResponseModel[EmployeeResponse], summary="查找员工")
 async def employee_find(employee_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
     e = employee_get(db, employee_id)
     if not e:
@@ -35,8 +35,8 @@ async def employ_all(db: Session = Depends(get_db), user: dict = Depends(get_cur
     return success([EmployeeResponse.model_validate(i) for i in employees])
 
 
-@employee_router.delete("/delete/{id}", response_model=ResponseModel, summary="删除员工")
-async def employee_delete(employee_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+@employee_router.delete("/delete/{employee_id}", response_model=ResponseModel, summary="删除员工")
+async def delete_employee(employee_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
     if user["role"] != "admin":
         return error(code=403, message="Only Admin can delete employee")
     if not employee_delete(db, employee_id):
