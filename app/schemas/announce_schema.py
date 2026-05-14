@@ -1,11 +1,12 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 
 class AnnounceResponse(BaseModel):
     title: str
     content: str
     author: str
-    date: str
+    date: datetime
 
     model_config = {
         "from_attributes": True

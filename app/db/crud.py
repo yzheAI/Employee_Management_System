@@ -1,4 +1,7 @@
+from app.core.response import error
 from app.models.announcement import Announcement
+from app.models.department import Department
+from app.models.employee import Employee
 from app.models.student import Student
 from app.models.user import User
 from sqlalchemy.orm import Session
@@ -98,5 +101,66 @@ def announce_delete(db: Session, announce_id) -> bool:
     if not announce:
         return False
     db.delete(announce)
+    db.commit()
+    return True
+
+
+def department_find(db: Session, department_id: int):
+    department_db = db.query(Department).filter(Department.id == department_id).first()
+    return department_db
+
+
+def department_create(db: Session, department_name: str, description: str):
+    department_db = db.query(Department).filter(Department.name == department_name).first()
+    if department_db:
+        return error(400, f"Department {department_name} already exists")
+    department = Department(name=department_name, description=description)
+    db.add(department)
+    db.commit()
+    db.refresh(department)
+    return department
+
+
+def department_all(db: Session):
+    departments = db.query(Department).all()
+    return departments
+
+
+def department_delete(db: Session, department_id: int):
+    department = department_find(db, department_id)
+    if not department:
+        return False
+    db.delete(department)
+    db.commit()
+    return True
+
+
+def employee_create(db: Session, name: str, age: int, gender: str, department_id: int, role: str):
+    if db.query(Employee).filter(Employee.name == name).first():
+        return error(400, message="Employee already exists")
+    if not db.query(Department).filter(Department.id == department_id).first():
+        return error(404, "Department not found")
+    employee = Employee(name=name, age=age, gender=gender, department_id=department_id, role=role)
+    db.add(employee)
+    db.commit()
+    db.refresh(employee)
+    return employee
+
+
+def employee_get(db: Session, employee_id: int):
+    employee = db.query(Employee).filter(Employee.id == employee_id).first()
+    return employee
+
+
+def employee_all(db: Session):
+    employees = db.query(Employee).all()
+    return employees
+
+
+def employee_delete(db: Session, employee_id: int):
+    employee = employee_get(db, employee_id)
+    if not employee:
+        return False
+    db.delete(employee)
     db.commit()
     return True
