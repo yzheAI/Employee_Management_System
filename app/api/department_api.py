@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.core.security import get_current_user
 from app.core.response import error, success
-from app.db.crud.department_crud import department_find, department_create, department_all, department_delete
+from app.db.crud.department_crud import department_get, department_create, department_all, department_delete
 from app.db.session import get_db
 from app.schemas.department_schema import DepartmentResponse, DepartmentCreate
 from app.schemas.response_schema import ResponseModel
@@ -37,7 +37,7 @@ async def get_department(
         db: Session = Depends(get_db),
         user: dict = Depends(get_current_user)
 ):
-    d = department_find(db, department_id)
+    d = department_get(db, department_id)
     return success(DepartmentResponse.model_validate(d))
 
 
@@ -49,6 +49,5 @@ async def delete_department(
 ):
     if user["role"] != "admin":
         return error(code=403, message="Only Admin can delete Department")
-    if not department_delete(db, d_id):
-        return error(404, "Department not found")
+    department_delete(db, d_id)
     return success("Department deleted")

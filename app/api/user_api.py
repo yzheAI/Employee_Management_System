@@ -11,9 +11,6 @@ router = APIRouter(prefix="/users", tags=["用户管理"])
 
 @router.post("/register", summary="用户注册")
 async def register(user: UserRegister, db: Session = Depends(get_db)):
-    db_user = get_user(db, user.username)
-    if db_user:
-        return error(400, "用户已存在")
     u = create_user(db, user.username, user.password, user.role)
     return success({
         "username": u.username,
@@ -25,7 +22,7 @@ async def register(user: UserRegister, db: Session = Depends(get_db)):
 async def login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = get_user(db, user.username)
     if not db_user or not verify_user(user.password, db_user.password):
-        raise HTTPException(400, "用户名或密码错误")
+        return error(401, "账户或密码错误")
     access_token = login_user(db_user)
     return success(TokenResponse(access_token=access_token, token_type="Bearer"))
 

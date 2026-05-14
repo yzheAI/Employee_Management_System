@@ -6,7 +6,8 @@ from app.core.security import get_current_user
 from app.db.session import get_db
 from app.schemas.response_schema import ResponseModel
 from app.schemas.announce_schema import AnnounceResponse, AnnounceCreate
-from app.db.crud.announcement_crud import announce_create, announce_delete, announce_find, announce_show_all
+from app.db.crud.announcement_crud import announce_create, announce_delete, announce_get, announce_show_all
+
 announce_router = APIRouter(prefix="/announcement", tags=["公告"])
 
 
@@ -20,9 +21,7 @@ def create_announce(announce: AnnounceCreate, db: Session = Depends(get_db), use
 
 @announce_router.get("/find/", response_model=ResponseModel[AnnounceResponse], summary="查找公告")
 def get_announce(title: str, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
-    announce_db = announce_find(db, title)
-    if not announce_db:
-        return error(404, "没有该公告")
+    announce_db = announce_get(db, title)
     return success(AnnounceResponse.model_validate(announce_db))
 
 
@@ -36,6 +35,5 @@ def get_all(db: Session = Depends(get_db), user: dict = Depends(get_current_user
 def delete_announce(title: str, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
     if user["role"] != "admin":
         return error(403, "只有管理员能删除")
-    if not announce_delete(db, title):
-        return error(404, "没有该公告")
+    announce_delete(db, title)
     return success("删除成功")

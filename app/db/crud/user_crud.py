@@ -1,10 +1,13 @@
 import bcrypt
 from sqlalchemy.orm import Session
-
+from app.core.exceptions import ConflictError, NotFoundError
 from app.models.user import User
 
 
 def create_user(db: Session, username, password, role="user"):
+    db_user = get_user(db=db, username=username)
+    if db_user:
+        raise ConflictError(f"User {username} already exists")
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     user = User(
         username=username,

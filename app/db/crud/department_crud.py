@@ -1,18 +1,19 @@
 from sqlalchemy.orm import Session
-
-from app.core.response import error
+from app.core.exceptions import ConflictError, NotFoundError
 from app.models.department import Department
 
 
-def department_find(db: Session, department_id: int):
+def department_get(db: Session, department_id: int):
     department_db = db.query(Department).filter(Department.id == department_id).first()
+    if not department_db:
+        raise NotFoundError(f"Department with id {department_id} not found")
     return department_db
 
 
 def department_create(db: Session, department_name: str, description: str):
     department_db = db.query(Department).filter(Department.name == department_name).first()
     if department_db:
-        return error(400, f"Department {department_name} already exists")
+        raise ConflictError(f"Department with name '{department_name}' already exists")
     department = Department(name=department_name, description=description)
     db.add(department)
     db.commit()
@@ -26,9 +27,7 @@ def department_all(db: Session):
 
 
 def department_delete(db: Session, department_id: int):
-    department = department_find(db, department_id)
-    if not department:
-        return False
+    department = department_get(db, department_id)
     db.delete(department)
     db.commit()
     return True
