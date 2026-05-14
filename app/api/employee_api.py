@@ -3,7 +3,9 @@ from sqlalchemy.orm import Session
 from app.core.security import get_current_user
 from app.core.response import error, success
 from app.db.crud.employee_crud import employee_get, employee_create, employee_delete, employee_all
+from app.db.crud.employee_crud import get_employee_department
 from app.db.session import get_db
+from app.schemas.department_schema import DepartmentResponse
 from app.schemas.employee_schema import EmployeeCreate, EmployeeResponse
 from app.schemas.response_schema import ResponseModel
 employee_router = APIRouter(prefix="/employees", tags=["员工"])
@@ -41,3 +43,9 @@ async def delete_employee(employee_id: int, db: Session = Depends(get_db), user:
     return success(message="Employee deleted")
 
 
+@employee_router.get("/department/{employee_id}", response_model=ResponseModel[DepartmentResponse], summary="查找所在部门")
+async def find_employee_department(employee_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+    department = get_employee_department(db, employee_id)
+    if not department:
+        return error(code=404, message="Department not found")
+    return success(DepartmentResponse.model_validate(department))

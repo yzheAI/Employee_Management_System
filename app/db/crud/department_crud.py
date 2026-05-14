@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.core.exceptions import ConflictError, NotFoundError
 from app.models.department import Department
+from app.models.employee import Employee
 
 
 def department_get(db: Session, department_id: int):
@@ -31,3 +32,8 @@ def department_delete(db: Session, department_id: int):
     db.delete(department)
     db.commit()
     return True
+
+
+def get_department_employees(db: Session, department_id: int):
+    employees = db.query(Employee).filter(Employee.department_id == department_id).all()
+    return employees

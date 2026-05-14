@@ -31,3 +31,9 @@ def employee_delete(db: Session, employee_id: int):
     db.delete(employee)
     db.commit()
     return True
+
+
+def get_employee_department(db: Session, employee_id: int):
+    employee = employee_get(db, employee_id)
+    department = employee.department
+    return department
