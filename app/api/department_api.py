@@ -2,9 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.core.security import get_current_user
 from app.core.response import error, success
-from app.db.crud import department_find, department_create, department_all, department_delete
+from app.db.crud.department_crud import department_find, department_create, department_all, department_delete
 from app.db.session import get_db
-from app.models.department import Department
 from app.schemas.department_schema import DepartmentResponse, DepartmentCreate
 from app.schemas.response_schema import ResponseModel
 

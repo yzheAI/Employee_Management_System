@@ -2,10 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.core.security import get_current_user
 from app.core.response import error, success
-from app.db.crud import employee_get, employee_create, employee_delete, employee_all
+from app.db.crud.employee_crud import employee_get, employee_create, employee_delete, employee_all
 from app.db.session import get_db
-from app.models.department import Department
-from app.models.employee import Employee
 from app.schemas.employee_schema import EmployeeCreate, EmployeeResponse
 from app.schemas.response_schema import ResponseModel
 employee_router = APIRouter(prefix="/employees", tags=["员工"])

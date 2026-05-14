@@ -1,18 +1,19 @@
-# Student Management System (CLI → FastAPI + MySQL + JWT)
+# Employee & Department Management System (CLI → FastAPI + MySQL + JWT)
 
-# 项目简介
-这是一个基于 Python 实现的学生管理系统，最初为命令行（CLI）版本，后逐步升级为基于 FastAPI 的 Web 应用，并完成数据存储层从 JSON 文件到 MySQL 数据库的重构。
+## 项目简介
 
-项目采用分层架构设计，支持学生信息的增删改查，引入JWT身份认证与基础权限控制，并具备良好的可扩展性与工程化结构。
+本项目最初为基于 Python CLI 的学生管理系统，后逐步重构为基于 FastAPI + SQLAlchemy 的组织管理系统（Factory Management System）。
 
-系统特点：
-- 支持 **CLI → Web API 演进**
-- 数据存储由 **JSON 重构为 SQLite + SQLAlchemy ORM**
-- 分离 **业务模型（Entity）与 API 模型（Pydantic Schema）**
-- 项目采用分层架构设计（API / Service / DB / Models / Core），实现了学生信息管理、用户认证与基础权限控制，并具备较好的可扩展性与工程化设计能力。
-- 支持日志记录与错误追踪
-- 实现 JWT 用户认证与基础 RBAC 权限控制
-- 扩展多业务模块（Student/User/Announcement）
+系统采用分层架构设计，实现了员工（Employee）与部门（Department）之间的一对多关系管理，并集成 JWT 身份认证、基础 RBAC 权限控制、统一响应结构与模块化 CRUD 设计。
+
+项目在开发过程中经历了：
+
+CLI → FastAPI Web API  
+JSON → SQLite/MySQL  
+单表 CRUD → ORM 关系系统  
+简单脚本 → 工程化后端架构
+
+具备较好的扩展性与中小型后端系统开发实践价值。
 
 ---
 
@@ -34,6 +35,7 @@
 - 登录注册JWT
 - 异常处理 + 统一返回格式
 - database url抽离
+- 添加employee和department模块
 
 ### 权限控制模块
 - admin 用户可进行增删改操作
@@ -57,6 +59,19 @@
 - 单条公告查询
 - 公告删除
 
+
+### Department 模块
+- 部门创建 / 查询 / 删除
+- 部门唯一性校验
+- Employee 一对多关系
+
+
+### Employee 模块
+- 员工创建 / 查询 / 删除
+- ForeignKey 外键关联
+- Department 归属关系
+- RBAC 权限控制
+
 ---
 
 ## 技术栈
@@ -69,6 +84,9 @@
 - 分层架构设计
 - JWT
 - bcrypt(密码加密)
+- SQLAlchemy Relationship
+- ForeignKey
+- RESTful API
 
 ---
 
@@ -77,38 +95,69 @@
 ```text
 Student_Manager/
 ├── app/
-│   ├── api/                 # API路由层
-│   │   ├── student_api.py
+│
+│   ├── api/                            # API 路由层
+│   │   ├── student_api.py              # legacy 模块（保留）
 │   │   ├── user_api.py
-│   │   └── announce_api.py
+│   │   ├── announcement_api.py
+│   │   ├── employee_api.py
+│   │   └── department_api.py
 │   │
-│   ├── config/              # 配置层
+│   ├── config/                         # 配置层
 │   │   ├── jwt.py
 │   │   └── setting.py
 │   │
-│   ├── core/                # 核心工具层
+│   ├── core/                           # 核心功能层
 │   │   ├── logger.py
 │   │   ├── response.py
-│   │   └── security.py
+│   │   ├── security.py
+│   │   └── exception_handler.py
 │   │
-│   ├── db/                  # 数据库层
-│   │   ├── crud.py
-│   │   └── session.py
+│   ├── db/                             # 数据库层
+│   │   ├── session.py
+│   │   │
+│   │   └── crud/                       # CRUD 模块化
+│   │       ├── student_crud.py
+│   │       ├── user_crud.py
+│   │       ├── announcement_crud.py
+│   │       ├── employee_crud.py
+│   │       └── department_crud.py
 │   │
-│   ├── models/              # ORM模型层
-│   │   ├── student.py
+│   ├── models/                         # SQLAlchemy ORM 模型
+│   │   ├── student.py                  # legacy
 │   │   ├── user.py
-│   │   └── announcement.py
+│   │   ├── announcement.py
+│   │   ├── employee.py
+│   │   └── department.py
 │   │
-│   ├── schemas/             # Pydantic模型层
+│   ├── schemas/                        # Pydantic 数据模型
+│   │   ├── response_schema.py
+│   │   │
 │   │   ├── student_schema.py
 │   │   ├── user_schema.py
-│   │   ├── response_schema.py
-│   │   └── announcement_schema.py
+│   │   ├── announcement_schema.py
+│   │   ├── employee_schema.py
+│   │   └── department_schema.py
 │   │
-│   ├── service/             # 业务逻辑层（预留扩展）
+│   ├── services/                       # 业务逻辑层（后期拆分）
+│   │   ├── employee_service.py
+│   │   ├── department_service.py
+│   │   └── auth_service.py
+│   │
+│   ├── utils/                          # 工具函数层（后期扩展）
+│   │   ├── pagination.py
+│   │   └── validator.py
+│   │
 │   └── .env
 │
-├── logs/
-├── main.py
-├── README.md                                    
+├── logs/                               # 日志文件
+│
+├── tests/                              # 测试模块（后期）
+│   ├── test_employee.py
+│   ├── test_department.py
+│   └── test_auth.py
+│
+├── main.py                             # FastAPI 入口
+├── requirements.txt
+├── README.md
+└── .gitignore                         
