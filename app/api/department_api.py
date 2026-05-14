@@ -10,7 +10,7 @@ from app.schemas.response_schema import ResponseModel
 department_router = APIRouter(prefix='/departments', tags=['部门'])
 
 
-@department_router.post('/create', response_model=ResponseModel[DepartmentResponse], summary="添加部门")
+@department_router.post('/', response_model=ResponseModel[DepartmentResponse], summary="添加部门")
 async def create_department(
         department: DepartmentCreate,
         db: Session = Depends(get_db),
@@ -22,7 +22,7 @@ async def create_department(
     return success(DepartmentResponse.model_validate(d))
 
 
-@department_router.get('/all', response_model=ResponseModel[list[DepartmentResponse]], summary="获取所有部门")
+@department_router.get('/', response_model=ResponseModel[list[DepartmentResponse]], summary="获取所有部门")
 async def get_all_departments(
         db: Session = Depends(get_db),
         user: dict = Depends(get_current_user)
@@ -31,7 +31,7 @@ async def get_all_departments(
     return success([DepartmentResponse.model_validate(i) for i in d])
 
 
-@department_router.get('/find/{department_id}', response_model=ResponseModel[DepartmentResponse], summary="查询部门")
+@department_router.get('/{department_id}', response_model=ResponseModel[DepartmentResponse], summary="查询部门")
 async def get_department(
         department_id: int,
         db: Session = Depends(get_db),
@@ -41,7 +41,7 @@ async def get_department(
     return success(DepartmentResponse.model_validate(d))
 
 
-@department_router.delete('/delete/{department_id}', response_model=ResponseModel, summary="删除部门")
+@department_router.delete('/{department_id}', response_model=ResponseModel, summary="删除部门")
 async def delete_department(
         d_id: int,
         db: Session = Depends(get_db),

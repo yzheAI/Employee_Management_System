@@ -9,7 +9,7 @@ from app.schemas.response_schema import ResponseModel
 employee_router = APIRouter(prefix="/employees", tags=["员工"])
 
 
-@employee_router.post("/create", response_model=ResponseModel[EmployeeResponse],summary="员工登记")
+@employee_router.post("/", response_model=ResponseModel[EmployeeResponse],summary="员工登记")
 async def employee_register(
         employee: EmployeeCreate,
         db: Session = Depends(get_db),
@@ -21,19 +21,19 @@ async def employee_register(
     return success(EmployeeResponse.model_validate(e))
 
 
-@employee_router.get("/find/{employee_id}", response_model=ResponseModel[EmployeeResponse], summary="查找员工")
+@employee_router.get("/{employee_id}", response_model=ResponseModel[EmployeeResponse], summary="查找员工")
 async def employee_find(employee_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
     e = employee_get(db, employee_id)
     return success(EmployeeResponse.model_validate(e))
 
 
-@employee_router.get("/all", response_model=ResponseModel[list[EmployeeResponse]], summary="员工列表")
+@employee_router.get("/", response_model=ResponseModel[list[EmployeeResponse]], summary="员工列表")
 async def employ_all(db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
     employees = employee_all(db)
     return success([EmployeeResponse.model_validate(i) for i in employees])
 
 
-@employee_router.delete("/delete/{employee_id}", response_model=ResponseModel, summary="删除员工")
+@employee_router.delete("/{employee_id}", response_model=ResponseModel, summary="删除员工")
 async def delete_employee(employee_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
     if user["role"] != "admin":
         return error(code=403, message="Only Admin can delete employee")
