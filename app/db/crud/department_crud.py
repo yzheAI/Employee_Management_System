@@ -34,6 +34,16 @@ def department_delete(db: Session, department_id: int):
     return True
 
 
+def department_update(db: Session, department_id: int, name, description: str):
+    department = department_get(db, department_id)
+    department.name = name
+    department.description = description
+    db.commit()
+    db.refresh(department)
+    return department
+
+
 def get_department_employees(db: Session, department_id: int):
     employees = db.query(Employee).filter(Employee.department_id == department_id).all()
     return employees
+

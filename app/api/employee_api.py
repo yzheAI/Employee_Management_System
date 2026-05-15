@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.core.security import get_current_user
 from app.core.response import error, success
-from app.db.crud.employee_crud import employee_get, employee_create, employee_delete, employee_all
+from app.db.crud.employee_crud import employee_get, employee_create, employee_delete, employee_all, employee_update
 from app.db.crud.employee_crud import get_employee_department
 from app.db.session import get_db
 from app.schemas.department_schema import DepartmentResponse
@@ -44,8 +44,29 @@ async def delete_employee(employee_id: int, db: Session = Depends(get_db), user:
 
 
 @employee_router.get("/department/{employee_id}", response_model=ResponseModel[DepartmentResponse], summary="查找所在部门")
-async def find_employee_department(employee_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+async def find_employee_department(
+        employee_id: int,
+        db: Session = Depends(get_db),
+        user: dict = Depends(get_current_user)
+):
     department = get_employee_department(db, employee_id)
     if not department:
         return error(code=404, message="Department not found")
     return success(DepartmentResponse.model_validate(department))
+
+
+@employee_router.put("/{employee_id}", response_model=ResponseModel[EmployeeResponse], summary="修改员工信息")
+async def update_employee(
+        employee_id,
+        name,
+        age,
+        gender,
+        department_id,
+        role,
+        db: Session = Depends(get_db),
+        user: dict = Depends(get_current_user)):
+    if user["role"] != "admin":
+        return error(code=403, message="Only Admin can update employee")
+    employee = employee_update(db, employee_id, name, age, gender, department_id, role)
+    return success(EmployeeResponse.model_validate(employee))
+

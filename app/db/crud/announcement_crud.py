@@ -43,3 +43,14 @@ def announce_delete(db: Session, title) -> bool:
     db.delete(announce)
     db.commit()
     return True
+
+
+def announce_update(db: Session, title: str, content: str, author: str):
+    announcement = announce_get(db, title)
+    announcement.content = content
+    announcement.author = author
+    announcement.date = datetime.utcnow()
+    db.commit()
+    db.refresh(announcement)
+    return announcement
+

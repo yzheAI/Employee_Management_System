@@ -37,3 +37,28 @@ def get_employee_department(db: Session, employee_id: int):
     employee = employee_get(db, employee_id)
     department = employee.department
     return department
+
+
+def employee_update(
+        db: Session,
+        employee_id: int,
+        name: str,
+        age: int,
+        gender: str,
+        department_id: int,
+        role: str
+):
+
+    employee = employee_get(db, employee_id)
+    if not db.query(Department).filter(Department.id == department_id).first():
+        raise NotFoundError('Department does not exist')
+    employee.name = name
+    employee.age = age
+    employee.gender = gender
+    employee.department_id = department_id
+    employee.role = role
+    db.commit()
+    db.refresh(employee)
+    return employee
+
+

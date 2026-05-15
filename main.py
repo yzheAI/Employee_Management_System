@@ -8,12 +8,13 @@ import uvicorn
 from app.db.session import Base, engine
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="学生管理系统 API")
-app.include_router(router)
+app = FastAPI(title="企业管理系统 API")
+
 app.include_router(user_api.router)
 app.include_router(announce_router)
 app.include_router(employee_router)
 app.include_router(department_router)
+app.include_router(router)
 
 if __name__ == '__main__':
     uvicorn.run(
