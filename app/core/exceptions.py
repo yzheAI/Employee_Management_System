@@ -6,3 +6,9 @@ class NotFoundError(Exception):
 class ConflictError(Exception):
     def __init__(self, message="Conflict"):
         self.message = message
+
+
+class PermissionDenied(Exception):
+    def __init__(self, message="Permission Denied"):
+        self.message = message
+

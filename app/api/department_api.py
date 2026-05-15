@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.core.security import get_current_user
-from app.core.response import error, success
-from app.db.crud.department_crud import department_get, department_create, department_all, department_delete, \
-    department_update
-from app.db.crud.department_crud import get_department_employees
+from app.core.response import success
 from app.db.session import get_db
 from app.schemas.department_schema import DepartmentResponse, DepartmentCreate
 from app.schemas.employee_schema import EmployeeResponse
 from app.schemas.response_schema import ResponseModel
+from app.service.department_service import (department_create_service, department_delete_service,
+                                            department_update_service, department_get_service, departments_get_service,
+                                            department_get_employees_service)
 
 department_router = APIRouter(prefix='/departments', tags=['部门'])
 
@@ -19,9 +19,7 @@ async def create_department(
         db: Session = Depends(get_db),
         user: dict = Depends(get_current_user)
 ):
-    if user["role"] != "admin":
-        return error(code=403, message="Only Admin can create Department")
-    d = department_create(db, department.name, department.description)
+    d = department_create_service(db, department.name, department.description, user)
     return success(DepartmentResponse.model_validate(d))
 
 
@@ -30,7 +28,7 @@ async def get_all_departments(
         db: Session = Depends(get_db),
         user: dict = Depends(get_current_user)
 ):
-    d = department_all(db)
+    d = departments_get_service(db)
     return success([DepartmentResponse.model_validate(i) for i in d])
 
 
@@ -40,23 +38,21 @@ async def get_department(
         db: Session = Depends(get_db),
         user: dict = Depends(get_current_user)
 ):
-    d = department_get(db, department_id)
+    d = department_get_service(db, department_id)
     return success(DepartmentResponse.model_validate(d))
 
 
 @department_router.delete('/{department_id}', response_model=ResponseModel, summary="删除部门")
 async def delete_department(
-        d_id: int,
+        department_id: int,
         db: Session = Depends(get_db),
         user: dict = Depends(get_current_user)
 ):
-    if user["role"] != "admin":
-        return error(code=403, message="Only Admin can delete Department")
-    department_delete(db, d_id)
+    department_delete_service(db, department_id, user)
     return success("Department deleted")
 
 
-@department_router.put('/{department_id}',response_model=ResponseModel[DepartmentResponse], summary="修改部门信息")
+@department_router.put('/{department_id}', response_model=ResponseModel[DepartmentResponse], summary="修改部门信息")
 async def update_department(
         department_id: int,
         name: str,
@@ -64,14 +60,12 @@ async def update_department(
         db: Session = Depends(get_db),
         user: dict = Depends(get_current_user)
 ):
-    if user["role"] != "admin":
-        return error(code=403, message="Only Admin can update Department")
-    department = department_update(db, department_id, name, description)
+    department = department_update_service(db, department_id, name, description, user)
     return success(DepartmentResponse.model_validate(department))
 
 
-@department_router.get('/employees/{department_id}', response_model=ResponseModel[list[EmployeeResponse]], summary="获取部门员工")
+@department_router.get('/employees/{department_id}', response_model=ResponseModel[list[EmployeeResponse]],
+                       summary="获取部门员工")
 async def get_employees(department_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
-    employees = get_department_employees(db, department_id)
+    employees = department_get_employees_service(db, department_id)
     return success([EmployeeResponse.model_validate(i) for i in employees])
-

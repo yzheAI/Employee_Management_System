@@ -17,3 +17,9 @@ class AnnounceCreate(BaseModel):
     title: str
     content: str
     author: str
+
+
+class AnnounceUpdate(BaseModel):
+    title: str
+    content: str
+    author: str

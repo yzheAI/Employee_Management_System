@@ -20,3 +20,11 @@ class EmployeeResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+
+class EmployeeUpdate(BaseModel):
+    name: str
+    age: int
+    gender: str
+    department_id: int
+    role: str
