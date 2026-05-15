@@ -1,6 +1,6 @@
-from typing import Optional
-
+from typing import Optional, List, Generic, TypeVar
 from pydantic import BaseModel
+T = TypeVar('T')
 
 
 class DepartmentCreate(BaseModel):
@@ -16,3 +16,10 @@ class DepartmentResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+
+class PageDepartment(BaseModel, Generic[T]):
+    page: int
+    size: int
+    total: int
+    items: List[T]

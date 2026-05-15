@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.core.exceptions import PermissionDenied
-from app.db.crud.announcement_crud import (announce_delete, announce_create, announce_update, announce_find,
+from app.db.crud.announcement_crud import (announce_delete, announce_create, announce_update,
                                            announce_get, announce_show_all)
 
 
@@ -26,10 +26,10 @@ def announce_update_service(db: Session, title: str, description: str, author: s
 
 
 def announce_find_service(db: Session, title: str):
-    announcement = announce_find(db, title)
+    announcement = announce_get(db, title)
     return announcement
 
 
-def announce_show_service(db: Session):
-    announcement = announce_show_all(db)
+def announce_show_service(db: Session, page: int, size: int):
+    announcement = announce_show_all(db, page, size)
     return announcement

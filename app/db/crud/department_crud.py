@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from app.core.exceptions import ConflictError, NotFoundError
 from app.models.department import Department
 from app.models.employee import Employee
+from app.schemas.department_schema import DepartmentResponse
 
 
 def department_get(db: Session, department_id: int):
@@ -22,9 +23,17 @@ def department_create(db: Session, department_name: str, description: str):
     return department
 
 
-def department_all(db: Session):
-    departments = db.query(Department).all()
-    return departments
+def department_all(db: Session, page: int, size: int):
+    total = db.query(Department).count()
+    skip = (page - 1) * size
+    departments = db.query(Department).offset(skip).limit(size).all()
+    result = {
+        "page": page,
+        "size": size,
+        "total": total,
+        "items": [DepartmentResponse.model_validate(i) for i in departments]
+    }
+    return result
 
 
 def department_delete(db: Session, department_id: int):

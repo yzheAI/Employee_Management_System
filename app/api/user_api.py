@@ -6,12 +6,14 @@ from app.db.session import get_db
 from app.core.security import get_current_user, login_user
 from app.core.response import success, error
 from app.schemas.response_schema import ResponseModel
+from app.service.user_service import user_register_service, user_login_service
+
 router = APIRouter(prefix="/users", tags=["用户管理"])
 
 
 @router.post("/register", summary="用户注册")
 async def register(user: UserRegister, db: Session = Depends(get_db)):
-    u = create_user(db, user.username, user.password, user.role)
+    u = user_register_service(db=db, username=user.username, password=user.password, role=user.role)
     return success({
         "username": u.username,
         "role": u.role
@@ -20,10 +22,7 @@ async def register(user: UserRegister, db: Session = Depends(get_db)):
 
 @router.post("/login", summary="用户登录", response_model=ResponseModel[TokenResponse])
 async def login(user: UserLogin, db: Session = Depends(get_db)):
-    db_user = get_user(db, user.username)
-    if not db_user or not verify_user(user.password, db_user.password):
-        return error(401, "账户或密码错误")
-    access_token = login_user(db_user)
+    access_token = user_login_service(db=db, username=user.username, password=user.password)
     return success(TokenResponse(access_token=access_token, token_type="Bearer"))
 
 

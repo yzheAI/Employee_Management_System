@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.core.security import get_current_user
 from app.core.response import success
 from app.db.session import get_db
-from app.schemas.department_schema import DepartmentResponse, DepartmentCreate
+from app.schemas.department_schema import DepartmentResponse, DepartmentCreate, PageDepartment
 from app.schemas.employee_schema import EmployeeResponse
 from app.schemas.response_schema import ResponseModel
 from app.service.department_service import (department_create_service, department_delete_service,
@@ -23,13 +23,15 @@ async def create_department(
     return success(DepartmentResponse.model_validate(d))
 
 
-@department_router.get('/', response_model=ResponseModel[list[DepartmentResponse]], summary="获取所有部门")
+@department_router.get('/', response_model=ResponseModel[PageDepartment[DepartmentResponse]], summary="获取所有部门")
 async def get_all_departments(
         db: Session = Depends(get_db),
+        page: int = 1,
+        size: int = 10,
         user: dict = Depends(get_current_user)
 ):
-    d = departments_get_service(db)
-    return success([DepartmentResponse.model_validate(i) for i in d])
+    result = departments_get_service(db, page, size)
+    return success(result)
 
 
 @department_router.get('/{department_id}', response_model=ResponseModel[DepartmentResponse], summary="查询部门")

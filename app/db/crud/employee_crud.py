@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from app.core.exceptions import ConflictError, NotFoundError
 from app.models.department import Department
 from app.models.employee import Employee
+from app.schemas.employee_schema import EmployeeResponse
 
 
 def employee_create(db: Session, name: str, age: int, gender: str, department_id: int, role: str):
@@ -21,9 +22,17 @@ def employee_get(db: Session, employee_id: int):
     return employee
 
 
-def employee_all(db: Session):
-    employees = db.query(Employee).all()
-    return employees
+def employee_all(db: Session, page: int, size: int):
+    skip = (page - 1) * size
+    total = db.query(Employee).count()
+    employees = db.query(Employee).offset(skip).limit(size).all()
+    result = {
+        "page": page,
+        "size": size,
+        "total": total,
+        "items": [EmployeeResponse.model_validate(i) for i in employees]
+    }
+    return result
 
 
 def employee_delete(db: Session, employee_id: int):

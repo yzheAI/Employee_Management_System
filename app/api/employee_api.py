@@ -4,7 +4,7 @@ from app.core.security import get_current_user
 from app.core.response import success
 from app.db.session import get_db
 from app.schemas.department_schema import DepartmentResponse
-from app.schemas.employee_schema import EmployeeCreate, EmployeeResponse, EmployeeUpdate
+from app.schemas.employee_schema import EmployeeCreate, EmployeeResponse, EmployeeUpdate, PageEmployee
 from app.schemas.response_schema import ResponseModel
 from app.service.employee_service import (employee_delete_service, employee_register_service, employee_update_service,
                                           employee_find_department_service, employee_find_service,
@@ -36,10 +36,11 @@ async def employee_find(employee_id: int, db: Session = Depends(get_db), user: d
     return success(EmployeeResponse.model_validate(e))
 
 
-@employee_router.get("/", response_model=ResponseModel[list[EmployeeResponse]], summary="员工列表")
-async def employ_all(db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
-    employees = employees_find_service(db)
-    return success([EmployeeResponse.model_validate(i) for i in employees])
+@employee_router.get("/", response_model=ResponseModel[PageEmployee[EmployeeResponse]], summary="员工列表")
+async def employee_all(
+        db: Session = Depends(get_db), page: int = 1, size: int = 10, user: dict = Depends(get_current_user)):
+    result = employees_find_service(db, page, size)
+    return success(result)
 
 
 @employee_router.delete("/{employee_id}", response_model=ResponseModel, summary="删除员工")

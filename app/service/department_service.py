@@ -30,8 +30,8 @@ def department_get_service(db: Session, department_id: int):
     return department
 
 
-def departments_get_service(db: Session):
-    departments = department_all(db)
+def departments_get_service(db: Session, page, size):
+    departments = department_all(db, page, size)
     return departments
 
 

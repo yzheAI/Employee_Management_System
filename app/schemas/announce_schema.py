@@ -1,5 +1,8 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional, TypeVar, Generic, List
+
+T = TypeVar('T')
 
 
 class AnnounceResponse(BaseModel):
@@ -23,3 +26,10 @@ class AnnounceUpdate(BaseModel):
     title: str
     content: str
     author: str
+
+
+class PageAnnouncement(BaseModel, Generic[T]):
+    page: int
+    size: int
+    total: int
+    items: List[T]

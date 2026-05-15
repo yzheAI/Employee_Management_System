@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from typing import Optional, Generic, TypeVar, List
+T = TypeVar('T')
 
 
 class EmployeeCreate(BaseModel):
@@ -28,3 +30,10 @@ class EmployeeUpdate(BaseModel):
     gender: str
     department_id: int
     role: str
+
+
+class PageEmployee(BaseModel, Generic[T]):
+    page: int
+    size: int
+    total: int
+    items: List[T]

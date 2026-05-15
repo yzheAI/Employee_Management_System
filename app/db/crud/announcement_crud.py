@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.core.exceptions import ConflictError, NotFoundError
 from app.models.announcement import Announcement
+from app.schemas.announce_schema import AnnounceResponse
 
 
 def announce_create(db: Session, title: str, content: str, author: str):
@@ -33,9 +34,17 @@ def announce_find(db: Session, title: str):
     return db.query(Announcement).filter(Announcement.title == title).first()
 
 
-def announce_show_all(db: Session):
-    announces = db.query(Announcement).all()
-    return announces
+def announce_show_all(db: Session, page: int, size: int):
+    total = db.query(Announcement).count()
+    skip = (page - 1) * size
+    announces = db.query(Announcement).offset(skip).limit(size).all()
+    re_announcement = {
+        "page": page,
+        "size": size,
+        "total": total,
+        "items": [AnnounceResponse.model_validate(i) for i in announces],
+    }
+    return re_announcement
 
 
 def announce_delete(db: Session, title) -> bool:

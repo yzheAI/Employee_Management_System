@@ -4,7 +4,7 @@ from app.core.response import success
 from app.core.security import get_current_user
 from app.db.session import get_db
 from app.schemas.response_schema import ResponseModel
-from app.schemas.announce_schema import AnnounceResponse, AnnounceCreate
+from app.schemas.announce_schema import AnnounceResponse, AnnounceCreate, PageAnnouncement
 from app.service.announce_service import announce_create_service, announce_delete_service, announce_update_service, \
     announce_find_service, announce_show_service
 
@@ -23,10 +23,10 @@ def get_announce(title: str, db: Session = Depends(get_db), user: dict = Depends
     return success(AnnounceResponse.model_validate(announce_db))
 
 
-@announce_router.get("/", response_model=ResponseModel[list[AnnounceResponse]], summary="获取所有公告")
-def get_all(db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
-    announcements = announce_show_service(db)
-    return success([AnnounceResponse.model_validate(i) for i in announcements])
+@announce_router.get("/", response_model=ResponseModel[PageAnnouncement[AnnounceResponse]], summary="获取所有公告")
+def get_all(page: int = 1, size: int = 10, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+    result = announce_show_service(db, page, size)
+    return success(result)
 
 
 @announce_router.delete("/{title}", response_model=ResponseModel, summary="删除公告")
