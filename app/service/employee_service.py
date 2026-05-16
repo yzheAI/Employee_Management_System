@@ -58,6 +58,7 @@ def employee_find_service(db: Session, employee_id: int):
     return employee
 
 
-def employees_search_service(db: Session, name: str, age: int, gender: str, role: str, page: int, size: int):
-    employees = employee_search(db, name, age, gender, role, page, size)
+def employees_search_service(db: Session, name: str, age: int, gender: str, role: str, order_by: str, order: str,
+                             page: int, size: int):
+    employees = employee_search(db, name, age, gender, role, order_by, order, page, size)
     return employees

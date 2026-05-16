@@ -37,12 +37,14 @@ async def search_employees(
         age: int | None = None,
         gender: str = "",
         role: str = "",
+        order_by: str = "",
+        order: str = "desc",
         page: int = 1,
         size: int = 10,
         db: Session = Depends(get_db),
         user: dict = Depends(get_current_user)
 ):
-    employees = employees_search_service(db, name, age, gender, role, page, size)
+    employees = employees_search_service(db, name, age, gender, role, order_by, order, page, size)
     return success(employees)
 
 

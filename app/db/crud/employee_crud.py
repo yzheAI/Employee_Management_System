@@ -59,15 +59,29 @@ def employee_update(
     return employee
 
 
-def employee_search(db: Session, name: str, age: int, gender: str, role: str, page: int, size: int):
+def employee_search(db: Session, name: str, age: int, gender: str, role: str, order_by: str, order: str, page: int,
+                    size: int):
     query = db.query(Employee)
-    if name.strip():
+    if name and name.strip():
         query = query.filter(Employee.name.like(f'%{name}%'))
     if age is not None:
         query = query.filter(Employee.age == age)
-    if gender.strip():
+    if gender and gender.strip():
         query = query.filter(Employee.gender == gender)
-    if role.strip():
+    if role and role.strip():
         query = query.filter(Employee.role == role)
+
+    order_column = {
+        "id": Employee.id,
+        "age": Employee.age,
+        "name": Employee.name,
+        "created_at": Employee.created_at
+    }.get(order_by, Employee.id)
+
+    if order == "desc":
+        query = query.order_by(order_column.desc())
+    else:
+        query = query.order_by(order_column.asc())
+
     result = paginate(query, page, size, EmployeeResponse)
     return result
