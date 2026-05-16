@@ -6,7 +6,7 @@ from app.db.session import get_db
 from app.schemas.response_schema import ResponseModel
 from app.schemas.announce_schema import AnnounceResponse, AnnounceCreate, PageAnnouncement
 from app.service.announce_service import announce_create_service, announce_delete_service, announce_update_service, \
-    announce_find_service, announce_show_service, announce_search_service
+    announce_find_service,  announce_search_service
 
 announce_router = APIRouter(prefix="/announcement", tags=["公告"])
 
@@ -17,16 +17,23 @@ def create_announce(announce: AnnounceCreate, db: Session = Depends(get_db), use
     return success(AnnounceResponse.model_validate(a))
 
 
+@announce_router.get("/search", response_model=ResponseModel[PageAnnouncement[AnnounceResponse]],
+                     summary="公告列表（支持分页 + 模糊查询）")
+def search_announce(
+        keyword: str = "",
+        page: int = 1,
+        size: int = 10,
+        db: Session = Depends(get_db),
+        user: dict = Depends(get_current_user)
+):
+    announcements = announce_search_service(db, keyword, page, size)
+    return success(announcements)
+
+
 @announce_router.get("/{title}", response_model=ResponseModel[AnnounceResponse], summary="查找公告")
 def get_announce(title: str, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
     announce_db = announce_find_service(db, title)
     return success(AnnounceResponse.model_validate(announce_db))
-
-
-@announce_router.get("/", response_model=ResponseModel[PageAnnouncement[AnnounceResponse]], summary="获取所有公告")
-def get_all(page: int = 1, size: int = 10, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
-    result = announce_show_service(db, page, size)
-    return success(result)
 
 
 @announce_router.delete("/{title}", response_model=ResponseModel, summary="删除公告")
@@ -41,7 +48,3 @@ def update_announce(announce: AnnounceResponse, db: Session = Depends(get_db), u
     return success(AnnounceResponse.model_validate(announcement))
 
 
-@announce_router.get("/search/{keyword}", response_model=ResponseModel[list[AnnounceResponse]], summary="模糊查找")
-def search_announce(keyword: str, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
-    announcements = announce_search_service(db, keyword)
-    return success([AnnounceResponse.model_validate(announcement) for announcement in announcements])

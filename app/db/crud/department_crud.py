@@ -23,19 +23,6 @@ def department_create(db: Session, department_name: str, description: str):
     return department
 
 
-def department_all(db: Session, page: int, size: int):
-    total = db.query(Department).count()
-    skip = (page - 1) * size
-    departments = db.query(Department).offset(skip).limit(size).all()
-    result = {
-        "page": page,
-        "size": size,
-        "total": total,
-        "items": [DepartmentResponse.model_validate(i) for i in departments]
-    }
-    return result
-
-
 def department_delete(db: Session, department_id: int):
     department = department_get(db, department_id)
     db.delete(department)
@@ -57,6 +44,16 @@ def get_department_employees(db: Session, department_id: int):
     return employees
 
 
-def department_search(db: Session, keyword: str):
-    departments = db.query(Department).filter(Department.name.ilike(f"%{keyword}%")).all()
-    return departments
+def department_search(db: Session, keyword: str, page: int, size: int):
+    query = db.query(Department)
+    if keyword and keyword.strip():
+        query = query.filter(Department.name.ilike(f'%{keyword}%'))
+    total = query.count()
+    items = query.offset((page - 1) * size).limit(size).all()
+    result = {
+        "page": page,
+        "size": size,
+        "total": total,
+        "items": [DepartmentResponse.model_validate(i) for i in items]
+    }
+    return result

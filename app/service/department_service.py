@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.core.exceptions import PermissionDenied
 from app.db.crud.department_crud import (
-    department_get, department_all, department_delete, department_update, department_create, get_department_employees,
+    department_get, department_delete, department_update, department_create, get_department_employees,
     department_search)
 
 
@@ -31,16 +31,11 @@ def department_get_service(db: Session, department_id: int):
     return department
 
 
-def departments_get_service(db: Session, page, size):
-    departments = department_all(db, page, size)
-    return departments
-
-
 def department_get_employees_service(db: Session, department_id: int):
     employees = get_department_employees(db, department_id)
     return employees
 
 
-def department_search_service(db: Session, key: str):
-    employees = department_search(db, key)
+def department_search_service(db: Session, key: str, page: int, size: int):
+    employees = department_search(db, key, page, size)
     return employees

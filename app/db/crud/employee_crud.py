@@ -22,19 +22,6 @@ def employee_get(db: Session, employee_id: int):
     return employee
 
 
-def employee_all(db: Session, page: int, size: int):
-    skip = (page - 1) * size
-    total = db.query(Employee).count()
-    employees = db.query(Employee).offset(skip).limit(size).all()
-    result = {
-        "page": page,
-        "size": size,
-        "total": total,
-        "items": [EmployeeResponse.model_validate(i) for i in employees]
-    }
-    return result
-
-
 def employee_delete(db: Session, employee_id: int):
     employee = employee_get(db, employee_id)
     db.delete(employee)
@@ -71,6 +58,16 @@ def employee_update(
     return employee
 
 
-def employee_search(db: Session, keyword: str):
-    employees = db.query(Employee).filter(Employee.name.ilike(f"%{keyword}%")).all()
-    return employees
+def employee_search(db: Session, keyword: str, page: int, size: int):
+    query = db.query(Employee)
+    if keyword and keyword.strip():
+        query = query.filter(Employee.name.like(f'%{keyword}%'))
+    total = query.count()
+    items = query.offset((page - 1) * size).limit(size).all()
+    result = {
+        "page": page,
+        "size": size,
+        "total": total,
+        "items": [EmployeeResponse.model_validate(i) for i in items]
+    }
+    return result

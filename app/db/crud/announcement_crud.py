@@ -34,19 +34,6 @@ def announce_find(db: Session, title: str):
     return db.query(Announcement).filter(Announcement.title == title).first()
 
 
-def announce_show_all(db: Session, page: int, size: int):
-    total = db.query(Announcement).count()
-    skip = (page - 1) * size
-    announces = db.query(Announcement).offset(skip).limit(size).all()
-    re_announcement = {
-        "page": page,
-        "size": size,
-        "total": total,
-        "items": [AnnounceResponse.model_validate(i) for i in announces],
-    }
-    return re_announcement
-
-
 def announce_delete(db: Session, title) -> bool:
     announce = announce_get(db, title)
     db.delete(announce)
@@ -64,6 +51,18 @@ def announce_update(db: Session, title: str, content: str, author: str):
     return announcement
 
 
-def announce_search(db: Session, keyword: str):
-    announcements = db.query(Announcement).filter(Announcement.title.ilike(f"%{keyword}%")).all()
-    return announcements
+def announce_search(db: Session, keyword: str, page: int, size: int):
+    query = db.query(Announcement)
+    if keyword and keyword.strip():
+        query = query.filter(
+            Announcement.title.like(f"%{keyword}%")
+        )
+    total = query.count()
+    items = query.offset((page - 1) * size).limit(size).all()
+    result = {
+        "page": page,
+        "size": size,
+        "total": total,
+        "items": [AnnounceResponse.model_validate(i) for i in items],
+    }
+    return result

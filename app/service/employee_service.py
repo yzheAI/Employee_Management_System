@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.core.exceptions import PermissionDenied, NotFoundError
-from app.db.crud.employee_crud import (employee_update, employee_create, employee_delete, employee_all,
+from app.db.crud.employee_crud import (employee_update, employee_create, employee_delete,
                                        get_employee_department, employee_get, employee_search)
 
 
@@ -58,11 +58,6 @@ def employee_find_service(db: Session, employee_id: int):
     return employee
 
 
-def employees_find_service(db: Session, page: int, size: int):
-    employees = employee_all(db, page, size)
-    return employees
-
-
-def employees_search_service(db: Session, keyword: str):
-    employees = employee_search(db, keyword)
+def employees_search_service(db: Session, keyword: str, page: int, size: int):
+    employees = employee_search(db, keyword, page, size)
     return employees
