@@ -4,6 +4,7 @@ from app.models.department import Department
 from app.models.employee import Employee
 from app.schemas.employee_schema import EmployeeResponse
 from utils.pagination import paginate
+from utils.sorting import apply_sort
 
 
 def employee_create(db: Session, name: str, age: int, gender: str, department_id: int, role: str):
@@ -62,13 +63,13 @@ def employee_update(
 def employee_search(db: Session, name: str, age: int, gender: str, role: str, order_by: str, order: str, page: int,
                     size: int):
     query = db.query(Employee)
-    if name and name.strip():
+    if name.strip():
         query = query.filter(Employee.name.like(f'%{name}%'))
     if age is not None:
         query = query.filter(Employee.age == age)
-    if gender and gender.strip():
+    if gender.strip():
         query = query.filter(Employee.gender == gender)
-    if role and role.strip():
+    if role.strip():
         query = query.filter(Employee.role == role)
 
     order_column = {
@@ -76,12 +77,8 @@ def employee_search(db: Session, name: str, age: int, gender: str, role: str, or
         "age": Employee.age,
         "name": Employee.name,
         "created_at": Employee.created_at
-    }.get(order_by, Employee.id)
-
-    if order == "desc":
-        query = query.order_by(order_column.desc())
-    else:
-        query = query.order_by(order_column.asc())
+    }
+    query = apply_sort(query, order_column, order_by, order, Employee)
 
     result = paginate(query, page, size, EmployeeResponse)
     return result
