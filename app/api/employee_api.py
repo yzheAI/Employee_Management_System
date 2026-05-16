@@ -8,7 +8,7 @@ from app.schemas.employee_schema import EmployeeCreate, EmployeeResponse, Employ
 from app.schemas.response_schema import ResponseModel
 from app.service.employee_service import (employee_delete_service, employee_register_service, employee_update_service,
                                           employee_find_department_service, employee_find_service,
-                                          employees_find_service)
+                                          employees_find_service, employees_search_service)
 employee_router = APIRouter(prefix="/employees", tags=["员工"])
 
 
@@ -77,3 +77,10 @@ async def update_employee(
         employee.role
     )
     return success(EmployeeResponse.model_validate(employee))
+
+
+@employee_router.get('/search/{keyword}', response_model=ResponseModel[list[EmployeeResponse]],summary="模糊查询")
+async def search_employees(keyword: str, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+    employees = employees_search_service(db, keyword)
+    return success([EmployeeResponse.model_validate(i) for i in employees])
+

@@ -63,3 +63,7 @@ def announce_update(db: Session, title: str, content: str, author: str):
     db.refresh(announcement)
     return announcement
 
+
+def announce_search(db: Session, keyword: str):
+    announcements = db.query(Announcement).filter(Announcement.title.ilike(f"%{keyword}%")).all()
+    return announcements

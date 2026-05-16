@@ -8,7 +8,8 @@ from app.schemas.employee_schema import EmployeeResponse
 from app.schemas.response_schema import ResponseModel
 from app.service.department_service import (department_create_service, department_delete_service,
                                             department_update_service, department_get_service, departments_get_service,
-                                            department_get_employees_service)
+                                            department_get_employees_service, department_search_service)
+from app.service.employee_service import employees_search_service
 
 department_router = APIRouter(prefix='/departments', tags=['部门'])
 
@@ -71,3 +72,11 @@ async def update_department(
 async def get_employees(department_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
     employees = department_get_employees_service(db, department_id)
     return success([EmployeeResponse.model_validate(i) for i in employees])
+
+
+@department_router.get('/search/{keyword}', response_model=ResponseModel[list[DepartmentResponse]], summary="模糊查询")
+async def search_department(keyword: str, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+    departments = department_search_service(db, keyword)
+    return success([DepartmentResponse.model_validate(department) for department in departments])
+
+

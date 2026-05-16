@@ -56,3 +56,7 @@ def get_department_employees(db: Session, department_id: int):
     employees = db.query(Employee).filter(Employee.department_id == department_id).all()
     return employees
 
+
+def department_search(db: Session, keyword: str):
+    departments = db.query(Department).filter(Department.name.ilike(f"%{keyword}%")).all()
+    return departments

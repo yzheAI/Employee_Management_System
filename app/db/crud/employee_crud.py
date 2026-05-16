@@ -71,3 +71,6 @@ def employee_update(
     return employee
 
 
+def employee_search(db: Session, keyword: str):
+    employees = db.query(Employee).filter(Employee.name.ilike(f"%{keyword}%")).all()
+    return employees
