@@ -26,10 +26,3 @@ class AnnounceUpdate(BaseModel):
     title: str
     content: str
     author: str
-
-
-class PageAnnouncement(BaseModel, Generic[T]):
-    page: int
-    size: int
-    total: int
-    items: List[T]

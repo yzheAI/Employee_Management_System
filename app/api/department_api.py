@@ -3,8 +3,9 @@ from sqlalchemy.orm import Session
 from app.core.security import get_current_user
 from app.core.response import success
 from app.db.session import get_db
-from app.schemas.department_schema import DepartmentResponse, DepartmentCreate, PageDepartment
+from app.schemas.department_schema import DepartmentResponse, DepartmentCreate
 from app.schemas.employee_schema import EmployeeResponse
+from app.schemas.page_schema import PageResponse
 from app.schemas.response_schema import ResponseModel
 from app.service.department_service import (department_create_service, department_delete_service,
                                             department_update_service, department_get_service,
@@ -24,7 +25,7 @@ async def create_department(
     return success(DepartmentResponse.model_validate(d))
 
 
-@department_router.get('/search', response_model=ResponseModel[PageDepartment[DepartmentResponse]], summary="部门列表（支持分页+模糊查询）")
+@department_router.get('/search', response_model=ResponseModel[PageResponse[DepartmentResponse]], summary="部门列表（支持分页+模糊查询）")
 async def search_department(
         keyword: str = "",
         page: int = 1,

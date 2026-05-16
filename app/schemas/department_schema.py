@@ -16,10 +16,3 @@ class DepartmentResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
-
-
-class PageDepartment(BaseModel, Generic[T]):
-    page: int
-    size: int
-    total: int
-    items: List[T]

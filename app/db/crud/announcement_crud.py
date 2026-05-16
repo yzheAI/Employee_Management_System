@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.core.exceptions import ConflictError, NotFoundError
 from app.models.announcement import Announcement
 from app.schemas.announce_schema import AnnounceResponse
+from utils.pagination import paginate
 
 
 def announce_create(db: Session, title: str, content: str, author: str):
@@ -57,12 +58,5 @@ def announce_search(db: Session, keyword: str, page: int, size: int):
         query = query.filter(
             Announcement.title.like(f"%{keyword}%")
         )
-    total = query.count()
-    items = query.offset((page - 1) * size).limit(size).all()
-    result = {
-        "page": page,
-        "size": size,
-        "total": total,
-        "items": [AnnounceResponse.model_validate(i) for i in items],
-    }
+    result = paginate(query, page, size, AnnounceResponse)
     return result

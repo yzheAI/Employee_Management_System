@@ -30,10 +30,3 @@ class EmployeeUpdate(BaseModel):
     gender: str
     department_id: int
     role: str
-
-
-class PageEmployee(BaseModel, Generic[T]):
-    page: int
-    size: int
-    total: int
-    items: List[T]

@@ -4,7 +4,8 @@ from app.core.response import success
 from app.core.security import get_current_user
 from app.db.session import get_db
 from app.schemas.response_schema import ResponseModel
-from app.schemas.announce_schema import AnnounceResponse, AnnounceCreate, PageAnnouncement
+from app.schemas.announce_schema import AnnounceResponse, AnnounceCreate
+from app.schemas.page_schema import PageResponse
 from app.service.announce_service import announce_create_service, announce_delete_service, announce_update_service, \
     announce_find_service,  announce_search_service
 
@@ -17,7 +18,7 @@ def create_announce(announce: AnnounceCreate, db: Session = Depends(get_db), use
     return success(AnnounceResponse.model_validate(a))
 
 
-@announce_router.get("/search", response_model=ResponseModel[PageAnnouncement[AnnounceResponse]],
+@announce_router.get("/search", response_model=ResponseModel[PageResponse[AnnounceResponse]],
                      summary="公告列表（支持分页 + 模糊查询）")
 def search_announce(
         keyword: str = "",
@@ -46,5 +47,3 @@ def delete_announce(title: str, db: Session = Depends(get_db), user: dict = Depe
 def update_announce(announce: AnnounceResponse, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
     announcement = announce_update_service(db, announce.title, announce.content, announce.author, user)
     return success(AnnounceResponse.model_validate(announcement))
-
-

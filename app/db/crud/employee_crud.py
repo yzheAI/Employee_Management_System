@@ -3,6 +3,7 @@ from app.core.exceptions import ConflictError, NotFoundError
 from app.models.department import Department
 from app.models.employee import Employee
 from app.schemas.employee_schema import EmployeeResponse
+from utils.pagination import paginate
 
 
 def employee_create(db: Session, name: str, age: int, gender: str, department_id: int, role: str):
@@ -62,12 +63,5 @@ def employee_search(db: Session, keyword: str, page: int, size: int):
     query = db.query(Employee)
     if keyword and keyword.strip():
         query = query.filter(Employee.name.like(f'%{keyword}%'))
-    total = query.count()
-    items = query.offset((page - 1) * size).limit(size).all()
-    result = {
-        "page": page,
-        "size": size,
-        "total": total,
-        "items": [EmployeeResponse.model_validate(i) for i in items]
-    }
+    result = paginate(query, page, size, EmployeeResponse)
     return result

@@ -3,6 +3,7 @@ from app.core.exceptions import ConflictError, NotFoundError
 from app.models.department import Department
 from app.models.employee import Employee
 from app.schemas.department_schema import DepartmentResponse
+from utils.pagination import paginate
 
 
 def department_get(db: Session, department_id: int):
@@ -48,12 +49,5 @@ def department_search(db: Session, keyword: str, page: int, size: int):
     query = db.query(Department)
     if keyword and keyword.strip():
         query = query.filter(Department.name.ilike(f'%{keyword}%'))
-    total = query.count()
-    items = query.offset((page - 1) * size).limit(size).all()
-    result = {
-        "page": page,
-        "size": size,
-        "total": total,
-        "items": [DepartmentResponse.model_validate(i) for i in items]
-    }
+    result = paginate(query, page, size, DepartmentResponse)
     return result
