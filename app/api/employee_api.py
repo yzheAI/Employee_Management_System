@@ -33,13 +33,16 @@ async def employee_register(
 
 @employee_router.get('/search', response_model=ResponseModel[PageResponse[EmployeeResponse]],summary="员工列表（支持分页+模糊查询）")
 async def search_employees(
-        keyword: str = "",
+        name: str = "",
+        age: int | None = None,
+        gender: str = "",
+        role: str = "",
         page: int = 1,
         size: int = 10,
         db: Session = Depends(get_db),
         user: dict = Depends(get_current_user)
 ):
-    employees = employees_search_service(db, keyword, page, size)
+    employees = employees_search_service(db, name, age, gender, role, page, size)
     return success(employees)
 
 

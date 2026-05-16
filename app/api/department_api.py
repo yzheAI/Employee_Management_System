@@ -27,13 +27,14 @@ async def create_department(
 
 @department_router.get('/search', response_model=ResponseModel[PageResponse[DepartmentResponse]], summary="部门列表（支持分页+模糊查询）")
 async def search_department(
-        keyword: str = "",
+        name: str = "",
+        description: str = "",
         page: int = 1,
         size: int = 10,
         db: Session = Depends(get_db),
         user: dict = Depends(get_current_user)
 ):
-    result = department_search_service(db, keyword, page, size)
+    result = department_search_service(db, name, description, page, size)
     return success(result)
 
 

@@ -36,6 +36,6 @@ def department_get_employees_service(db: Session, department_id: int):
     return employees
 
 
-def department_search_service(db: Session, key: str, page: int, size: int):
-    employees = department_search(db, key, page, size)
+def department_search_service(db: Session, name: str, description: str, page: int, size: int):
+    employees = department_search(db, name, description, page, size)
     return employees

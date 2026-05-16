@@ -30,6 +30,6 @@ def announce_find_service(db: Session, title: str):
     return announcement
 
 
-def announce_search_service(db: Session, keyword: str, page: int, size: int):
-    announcements = announce_search(db, keyword, page, size)
+def announce_search_service(db: Session, title: str, content: str, author: str,  page: int, size: int):
+    announcements = announce_search(db, title, content, author, page, size)
     return announcements

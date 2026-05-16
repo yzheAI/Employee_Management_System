@@ -21,13 +21,15 @@ def create_announce(announce: AnnounceCreate, db: Session = Depends(get_db), use
 @announce_router.get("/search", response_model=ResponseModel[PageResponse[AnnounceResponse]],
                      summary="公告列表（支持分页 + 模糊查询）")
 def search_announce(
-        keyword: str = "",
+        title: str = "",
+        content: str = "",
+        author: str = "",
         page: int = 1,
         size: int = 10,
         db: Session = Depends(get_db),
         user: dict = Depends(get_current_user)
 ):
-    announcements = announce_search_service(db, keyword, page, size)
+    announcements = announce_search_service(db, title, content, author, page, size)
     return success(announcements)
 
 

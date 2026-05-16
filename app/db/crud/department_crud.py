@@ -45,9 +45,11 @@ def get_department_employees(db: Session, department_id: int):
     return employees
 
 
-def department_search(db: Session, keyword: str, page: int, size: int):
+def department_search(db: Session, name: str, description: str, page: int, size: int):
     query = db.query(Department)
-    if keyword and keyword.strip():
-        query = query.filter(Department.name.ilike(f'%{keyword}%'))
+    if name.strip():
+        query = query.filter(Department.name.ilike(f'%{name}%'))
+    if description.strip():
+        query = query.filter(Department.description.ilike(f'%{description}%'))
     result = paginate(query, page, size, DepartmentResponse)
     return result

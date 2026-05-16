@@ -52,11 +52,19 @@ def announce_update(db: Session, title: str, content: str, author: str):
     return announcement
 
 
-def announce_search(db: Session, keyword: str, page: int, size: int):
+def announce_search(db: Session, title: str, content: str, author: str, page: int, size: int):
     query = db.query(Announcement)
-    if keyword and keyword.strip():
+    if title.strip():
         query = query.filter(
-            Announcement.title.like(f"%{keyword}%")
+            Announcement.title.ilike(f"%{title}%")
+        )
+    if content.strip():
+        query = query.filter(
+            Announcement.content.ilike(f"%{content}%")
+        )
+    if author.strip():
+        query = query.filter(
+            Announcement.author.ilike(f"%{author}%")
         )
     result = paginate(query, page, size, AnnounceResponse)
     return result
