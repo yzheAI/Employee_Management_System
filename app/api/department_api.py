@@ -10,7 +10,7 @@ from app.schemas.response_schema import ResponseModel
 from app.service.department_service import (department_create_service, department_delete_service,
                                             department_update_service, department_get_service,
                                             department_get_employees_service, department_search_service)
-
+from app.core.permission import require_roles
 
 department_router = APIRouter(prefix='/departments', tags=['部门'])
 
@@ -19,9 +19,9 @@ department_router = APIRouter(prefix='/departments', tags=['部门'])
 async def create_department(
         department: DepartmentCreate,
         db: Session = Depends(get_db),
-        user: dict = Depends(get_current_user)
+        user: dict = Depends(require_roles("admin")),
 ):
-    d = department_create_service(db, department.name, department.description, user)
+    d = department_create_service(db, department.name, department.description)
     return success(DepartmentResponse.model_validate(d))
 
 
@@ -52,9 +52,9 @@ async def get_department(
 async def delete_department(
         department_id: int,
         db: Session = Depends(get_db),
-        user: dict = Depends(get_current_user)
+        user: dict = Depends(require_roles("admin")),
 ):
-    department_delete_service(db, department_id, user)
+    department_delete_service(db, department_id)
     return success("Department deleted")
 
 
@@ -64,9 +64,9 @@ async def update_department(
         name: str,
         description: str,
         db: Session = Depends(get_db),
-        user: dict = Depends(get_current_user)
+        user: dict = Depends(require_roles("admin")),
 ):
-    department = department_update_service(db, department_id, name, description, user)
+    department = department_update_service(db, department_id, name, description)
     return success(DepartmentResponse.model_validate(department))
 
 

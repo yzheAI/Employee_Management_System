@@ -1,12 +1,11 @@
 from sqlalchemy.orm import Session
-from app.core.exceptions import PermissionDenied, NotFoundError
+from app.core.exceptions import NotFoundError
 from app.db.crud.employee_crud import (employee_update, employee_create, employee_delete,
                                        get_employee_department, employee_get, employee_search)
 
 
 def employee_update_service(
         db: Session,
-        user: dict,
         employee_id: int,
         name: str,
         age: int,
@@ -14,35 +13,26 @@ def employee_update_service(
         department_id: int,
         role: str
 ):
-    if user["role"] != "admin":
-        raise PermissionDenied("只有管理员能更新")
-
     employee = employee_update(db, employee_id, name, age, gender, department_id, role)
     return employee
 
 
 def employee_register_service(
         db: Session,
-        user: dict,
         name: str,
         age: int,
         gender: str,
         department_id: int,
         role: str
 ):
-    if user["role"] != "admin":
-        raise PermissionDenied("只有管理员能添加")
     e = employee_create(db, name, age, gender, department_id, role)
     return e
 
 
 def employee_delete_service(
         db: Session,
-        user: dict,
         employee_id: int,
 ):
-    if user["role"] != "admin":
-        raise PermissionDenied("只有管理员能删除")
     employee_delete(db, employee_id)
 
 
