@@ -4,6 +4,7 @@ from app.models.department import Department
 from app.models.employee import Employee
 from app.schemas.employee_schema import EmployeeResponse
 from utils.pagination import paginate
+from utils.query_builder import apply_filters
 from utils.sorting import apply_sort
 
 
@@ -63,14 +64,27 @@ def employee_update(
 def employee_search(db: Session, name: str, age: int, gender: str, role: str, order_by: str, order: str, page: int,
                     size: int):
     query = db.query(Employee)
+
+    conditions = []
+
     if name.strip():
-        query = query.filter(Employee.name.like(f'%{name}%'))
+        conditions.append(
+            Employee.name.ilike(f"%{name}%")
+        )
     if age is not None:
-        query = query.filter(Employee.age == age)
+        conditions.append(
+            Employee.age == age
+        )
     if gender.strip():
-        query = query.filter(Employee.gender == gender)
+        conditions.append(
+            Employee.gender.ilike(f"%{gender}%")
+        )
     if role.strip():
-        query = query.filter(Employee.role == role)
+        conditions.append(
+            Employee.role.ilike(f"%{role}%")
+        )
+
+    query = apply_filters(query, conditions)
 
     order_column = {
         "id": Employee.id,

@@ -14,6 +14,15 @@ JSON → SQLite/MySQL
 
 具备较好的扩展性与中小型后端系统开发实践价值。
 
+技术栈:
+- FastAPI
+- SQLAlchemy
+- MySQL
+- JWT 身份认证
+- Pydantic
+- RESTful API
+- Python
+
 ---
 
 ## 功能
@@ -28,11 +37,14 @@ JSON → SQLite/MySQL
 - 统一响应结构
 - 模块化 CRUD 设计
 
-项目由早期 CLI 学生管理系统逐步重构演进而来，经历了：
+app
+├── api            # 接口层
+├── core           # 核心配置 / 安全认证
+├── crud           # 数据访问层
+├── db             # 数据库配置
+├── models         # ORM 模型
+├── schemas        # Pydantic 数据模型
+├── services       # 业务逻辑层
+├── utils          # 工具类, 统一 Query Layer
 
-CLI → FastAPI Web API  
-JSON → SQLite/MySQL  
-单表 CRUD → ORM 关系系统  
-脚本式开发 → 工程化后端架构
-
-适合作为中小型后端系统开发实践项目。                
+                

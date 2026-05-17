@@ -4,6 +4,7 @@ from app.models.department import Department
 from app.models.employee import Employee
 from app.schemas.department_schema import DepartmentResponse
 from utils.pagination import paginate
+from utils.query_builder import apply_filters
 
 
 def department_get(db: Session, department_id: int):
@@ -47,9 +48,19 @@ def get_department_employees(db: Session, department_id: int):
 
 def department_search(db: Session, name: str, description: str, page: int, size: int):
     query = db.query(Department)
+
+    conditions = []
+
     if name.strip():
-        query = query.filter(Department.name.ilike(f'%{name}%'))
+        conditions.append(
+            Department.name.ilike(f"%{name}%")
+        )
     if description.strip():
-        query = query.filter(Department.description.ilike(f'%{description}%'))
+        conditions.append(
+            Department.description.ilike(f"%{description}%")
+        )
+
+    query = apply_filters(query, conditions)
+
     result = paginate(query, page, size, DepartmentResponse)
     return result

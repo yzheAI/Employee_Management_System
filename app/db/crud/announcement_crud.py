@@ -6,6 +6,7 @@ from app.core.exceptions import ConflictError, NotFoundError
 from app.models.announcement import Announcement
 from app.schemas.announce_schema import AnnounceResponse
 from utils.pagination import paginate
+from utils.query_builder import apply_filters
 
 
 def announce_create(db: Session, title: str, content: str, author: str):
@@ -54,17 +55,22 @@ def announce_update(db: Session, title: str, content: str, author: str):
 
 def announce_search(db: Session, title: str, content: str, author: str, page: int, size: int):
     query = db.query(Announcement)
+
+    conditions = []
+
     if title.strip():
-        query = query.filter(
+        conditions.append(
             Announcement.title.ilike(f"%{title}%")
         )
     if content.strip():
-        query = query.filter(
+        conditions.append(
             Announcement.content.ilike(f"%{content}%")
         )
     if author.strip():
-        query = query.filter(
+        conditions.append(
             Announcement.author.ilike(f"%{author}%")
         )
+
+    query = apply_filters(query, conditions)
     result = paginate(query, page, size, AnnounceResponse)
     return result
