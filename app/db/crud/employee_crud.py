@@ -1,15 +1,18 @@
+from datetime import datetime
+
 from sqlalchemy.orm import Session
 from app.core.exceptions import ConflictError, NotFoundError
 from app.models.department import Department
 from app.models.employee import Employee
 from app.schemas.employee_schema import EmployeeResponse
 from utils.pagination import paginate
-from utils.query_builder import apply_filters
+from utils.query_builder import apply_filters, base_query
 from utils.sorting import apply_sort
 
 
 def employee_create(db: Session, name: str, age: int, gender: str, department_id: int, role: str):
-    if not db.query(Department).filter(Department.id == department_id).first():
+    query = base_query(db, Employee)
+    if not query.filter(Department.id == department_id).first():
         raise NotFoundError('Department does not exist')
     employee = Employee(name=name, age=age, gender=gender, department_id=department_id, role=role)
     db.add(employee)
@@ -19,7 +22,8 @@ def employee_create(db: Session, name: str, age: int, gender: str, department_id
 
 
 def employee_get(db: Session, employee_id: int):
-    employee = db.query(Employee).filter(Employee.id == employee_id).first()
+    employee = base_query(db, Employee)
+    employee = employee.filter(Employee.id == employee_id).first()
     if not employee:
         raise NotFoundError('Employee does not exist')
     return employee
@@ -27,7 +31,8 @@ def employee_get(db: Session, employee_id: int):
 
 def employee_delete(db: Session, employee_id: int):
     employee = employee_get(db, employee_id)
-    db.delete(employee)
+    employee.is_deleted = True
+    employee.deleted_at = datetime.utcnow()
     db.commit()
     return True
 
@@ -63,7 +68,7 @@ def employee_update(
 
 def employee_search(db: Session, name: str, age: int, gender: str, role: str, order_by: str, order: str, page: int,
                     size: int):
-    query = db.query(Employee)
+    query = base_query(db, Employee)
 
     conditions = []
 

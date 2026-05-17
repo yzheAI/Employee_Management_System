@@ -1,8 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, TypeVar, Generic, List
-
-T = TypeVar('T')
+from typing import Optional
 
 
 class AnnounceResponse(BaseModel):
@@ -10,6 +8,8 @@ class AnnounceResponse(BaseModel):
     content: str
     author: str
     date: datetime
+    is_deleted: bool
+    deleted_at: Optional[datetime] = None
 
     model_config = {
         "from_attributes": True

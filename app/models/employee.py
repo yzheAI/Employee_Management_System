@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from app.db.session import Base
 from datetime import datetime
@@ -10,6 +10,8 @@ class Employee(Base):
     name = Column(String(50))
     age = Column(Integer)
     gender = Column(String(10))
+    is_deleted = Column(Boolean, default=False)
+    deleted_at = Column(DateTime, nullable=True)
 
     department_id = Column(Integer, ForeignKey('departments.id'))
 

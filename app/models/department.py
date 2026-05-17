@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy.orm import relationship
 from app.db.session import Base
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Boolean
 
 
 class Department(Base):
@@ -10,6 +10,8 @@ class Department(Base):
     name = Column(String(50), unique=True)
     description = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    is_deleted = Column(Boolean, default=False)
+    deleted_at = Column(DateTime, nullable=True)
 
     employees = relationship('Employee', back_populates='department')
 

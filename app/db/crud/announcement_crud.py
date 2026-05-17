@@ -6,7 +6,7 @@ from app.core.exceptions import ConflictError, NotFoundError
 from app.models.announcement import Announcement
 from app.schemas.announce_schema import AnnounceResponse
 from utils.pagination import paginate
-from utils.query_builder import apply_filters
+from utils.query_builder import apply_filters, base_query
 
 
 def announce_create(db: Session, title: str, content: str, author: str):
@@ -25,20 +25,23 @@ def announce_create(db: Session, title: str, content: str, author: str):
     return announcement
 
 
+# must exist
 def announce_get(db: Session, title: str):
-    announce = db.query(Announcement).filter(Announcement.title == title).first()
+    announce = announce_find(db, title)
     if not announce:
         raise NotFoundError("not found announcement")
     return announce
 
 
 def announce_find(db: Session, title: str):
-    return db.query(Announcement).filter(Announcement.title == title).first()
+    query = db.query(Announcement)
+    return query.filter(Announcement.title == title).first()
 
 
 def announce_delete(db: Session, title) -> bool:
     announce = announce_get(db, title)
-    db.delete(announce)
+    announce.is_deleted = True
+    announce.deleted_at = datetime.utcnow()
     db.commit()
     return True
 
@@ -54,7 +57,7 @@ def announce_update(db: Session, title: str, content: str, author: str):
 
 
 def announce_search(db: Session, title: str, content: str, author: str, page: int, size: int):
-    query = db.query(Announcement)
+    query = base_query(db, Announcement)
 
     conditions = []
 

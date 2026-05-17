@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from app.db.session import Base
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, Boolean
 
 
 class Announcement(Base):
@@ -10,3 +10,5 @@ class Announcement(Base):
     content = Column(String(4096))
     author = Column(String(64))
     date = Column(DateTime, default=datetime.utcnow)
+    is_deleted = Column(Boolean, default=False)
+    deleted_at = Column(DateTime, nullable=True)
