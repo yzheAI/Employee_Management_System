@@ -1,9 +1,11 @@
-# Factory Management System (CLI → FastAPI + MySQL + JWT)
+# Factory Management System 
 
 ## 项目简介
 
 本项目是一个基于 FastAPI + SQLAlchemy + MySQL 的企业组织管理系统，
 采用分层架构设计，实现了员工（Employee）、部门（Department）、公告（Announcement）与用户（User）等模块的统一管理。
+系统包含了RBAC权限控制、动态查询构建、软删除机制、统一异常处理与分页排序等工程化设计，具备完整的后端系统架构能力。
+
 
 项目在开发过程中经历了：
 
@@ -12,7 +14,6 @@ JSON → SQLite/MySQL
 单表 CRUD → ORM 关系系统  
 简单脚本 → 工程化后端架构
 
-具备较好的扩展性与中小型后端系统开发实践价值。
 
 技术栈:
 - FastAPI
@@ -38,6 +39,17 @@ JSON → SQLite/MySQL
 - 模块化 CRUD 设计
 - 全局异常处理
 
+
+系统架构
+
+API Layer → Service Layer → CRUD Layer → Database
+
+- API层：处理请求与权限控制
+- Service层：业务逻辑
+- CRUD层：数据库操作封装
+- Core层：权限、异常、响应封装
+
+
 app
 ├── api            # 接口层
 ├── core           # 核心配置 / 安全认证
@@ -48,4 +60,43 @@ app
 ├── services       # 业务逻辑层
 ├── utils          # 工具类, 统一 Query Layer
 
+
+功能模块
+
+User模块
+- 用户注册、登录
+- JWT认证
+- 管理员创建用户
+
+Employee模块
+- 员工增删改查
+- 动态查询
+- 排序+分页
+
+Department模块
+- 部门增删改查
+- 查询部门员工
+- 动态查询
+- 排序+分页
+
+Announcement模块
+- 公告增删改查
+
+系统特点
+- RBAC权限控制
+- 软删除
+- 全局异常处理
+- 统一响应结构
+- Query Builder动态查询
                 
+
+###项目亮点
+- 基于FastAPI分层架构设计，实现API、Service、CRUD分离，提高代码可维护性和扩展性
+- 基于FastAPI实现RBAC权限控制系统，支持多角色访问
+- 封装动态查询系统，可以条件过滤、排序、分页，提高查询能力
+- 引入软删除机制，避免操作失误
+- 使用JWT进行用户认证和登录鉴权
+- 封装统一响应结构，规范接口返回格式
+- 引入日志系统，可进行日志记录
+- 使用SQLAlchemy ORM完成数据库操作
+- 使用Query Builder抽象通用查询逻辑，减少代码重复，提高开发效率
