@@ -4,9 +4,14 @@ from sqlalchemy.orm import Session
 from app.core.exceptions import PermissionDenied
 
 
-def user_register_service(db: Session, username: str, password: str, role):
-    user = create_user(db, username, password, role)
+def user_register_service(db: Session, username: str, password: str):
+    user = create_user(db, username, password)
     return user
+
+
+def admin_register_service(db: Session, username: str, password: str, role: str):
+    admin = create_user(db, username, password, role)
+    return admin
 
 
 def user_login_service(db: Session, username: str, password: str):

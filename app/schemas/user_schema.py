@@ -1,10 +1,11 @@
+from typing import Literal
+
 from pydantic import BaseModel
 
 
 class UserRegister(BaseModel):
     username: str
     password: str
-    role: str
 
 
 class UserLogin(BaseModel):
@@ -15,3 +16,9 @@ class UserLogin(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str
+
+
+class AdminRegister(BaseModel):
+    username: str
+    password: str
+    role: Literal["admin", "user", "manager"]
