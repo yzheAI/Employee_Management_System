@@ -34,7 +34,7 @@ def announce_get(db: Session, title: str):
 
 
 def announce_find(db: Session, title: str):
-    query = db.query(Announcement)
+    query = base_query(db, Announcement)
     return query.filter(Announcement.title == title).first()
 
 

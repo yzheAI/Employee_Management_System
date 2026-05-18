@@ -18,7 +18,7 @@ def department_get(db: Session, department_id: int):
 
 
 def department_create(db: Session, department_name: str, description: str):
-    department_db = db.query(Department).filter(Department.name == department_name).first()
+    department_db = base_query(db, Department).filter(Department.name == department_name).first()
     if department_db:
         raise ConflictError(f"Department with name '{department_name}' already exists")
     department = Department(name=department_name, description=description)
@@ -48,7 +48,7 @@ def department_update(db: Session, department_id: int, name, description: str):
 
 
 def get_department_employees(db: Session, department_id: int):
-    query = db.query(Employee)
+    query = base_query(db, Employee)
     employees = query.filter(Employee.department_id == department_id).all()
     return employees
 

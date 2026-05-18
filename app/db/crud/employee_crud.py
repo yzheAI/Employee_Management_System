@@ -11,7 +11,7 @@ from utils.sorting import apply_sort
 
 
 def employee_create(db: Session, name: str, age: int, gender: str, department_id: int, role: str):
-    query = base_query(db, Employee)
+    query = base_query(db, Department)
     if not query.filter(Department.id == department_id).first():
         raise NotFoundError('Department does not exist')
     employee = Employee(name=name, age=age, gender=gender, department_id=department_id, role=role)
