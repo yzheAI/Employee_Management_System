@@ -36,6 +36,7 @@ JSON → SQLite/MySQL
 - ORM 关系映射
 - 统一响应结构
 - 模块化 CRUD 设计
+- 全局异常处理
 
 app
 ├── api            # 接口层

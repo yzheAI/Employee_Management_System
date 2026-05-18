@@ -6,9 +6,11 @@ from app.api.employee_api import employee_router
 from app.api.department_api import department_router
 import uvicorn
 from app.db.session import Base, engine
+from app.core.handlers import register_exception_handler
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="企业管理系统 API")
+register_exception_handler(app)
 
 app.include_router(user_api.router)
 app.include_router(announce_router)
