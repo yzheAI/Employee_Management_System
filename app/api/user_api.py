@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
-
+from app.db.redis import redis_client
 from app.core.permission import require_roles
 from app.db.crud.user_crud import create_user, get_user, verify_user
 from app.schemas.user_schema import UserRegister, UserLogin, TokenResponse, AdminRegister
@@ -37,7 +37,8 @@ async def login(user: UserLogin, db: Session = Depends(get_db)):
     return success(TokenResponse(access_token=access_token, token_type="Bearer"))
 
 
-@router.get("/students/")
-def get_all(user=Depends(get_current_user)):
-    return {"message":  f"Hello, {user}! You have access to this data."}
-
+@router.post("/logout")
+def logout(user=Depends(get_current_user)):
+    token = user.get("token")
+    redis_client.set(f"blacklist:token:{token}", "1")
+    return {"msg": "logout success"}

@@ -81,6 +81,7 @@ app
 - 使用SQLAlchemy ORM完成数据库操作
 - 使用Query Builder抽象通用查询逻辑，减少代码重复，提高开发效率
 - alembic数据库迁移
+- - 使用 Redis 实现 JWT Token 黑名单机制，支持用户主动注销与 Token 失效控制
 
 
 
