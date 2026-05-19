@@ -2,8 +2,33 @@ version: "3.9"
 services:
   app:
     build: .
-    container_name: fastapi_app
+    container_name: fastapi_appen
     ports:
       - "8000:8000"
     volumes:
       - .:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      DB_HOST: db
+      REDIS_HOST: redis
+  db:
+    image: mysql_db
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: studentmanager
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+  redis:
+    image: redis:7
+    container_name: redis_cache
+    restart: always
+    ports:
+      - "6379:6379"
+volumes:
+  mysql_data:

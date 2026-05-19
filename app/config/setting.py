@@ -10,6 +10,8 @@ class Settings:
     DB_NAME = os.getenv("DB_NAME")
     DB_PORT = os.getenv("DB_PORT")
     SECRET_KEY = os.getenv("SECRET_KEY")
+    REDIS_HOST = "localhost"
+    REDIS_PORT = 6379
 
     @property
     def PATH(self):
