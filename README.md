@@ -15,7 +15,7 @@ JSON → SQLite/MySQL
 简单脚本 → 工程化后端架构
 
 
-技术栈:
+## 技术栈:
 - FastAPI
 - SQLAlchemy
 - MySQL
@@ -23,24 +23,11 @@ JSON → SQLite/MySQL
 - Pydantic
 - RESTful API
 - Python
-
----
-
-## 功能
-
-系统支持：
-
-- JWT 身份认证
-- RBAC 权限控制
-- RESTful API
-- 分页与模糊查询
-- ORM 关系映射
-- 统一响应结构
-- 模块化 CRUD 设计
-- 全局异常处理
+- alembic数据库迁移
 
 
-系统架构
+
+## 系统架构
 
 API Layer → Service Layer → CRUD Layer → Database
 
@@ -61,36 +48,29 @@ app
 ├── utils          # 工具类, 统一 Query Layer
 
 
-功能模块
+## 功能模块
 
-User模块
+### User模块
 - 用户注册、登录
 - JWT认证
 - 管理员创建用户
 
-Employee模块
+### Employee模块
 - 员工增删改查
 - 动态查询
 - 排序+分页
 
-Department模块
+### Department模块
 - 部门增删改查
 - 查询部门员工
 - 动态查询
 - 排序+分页
 
-Announcement模块
+### Announcement模块
 - 公告增删改查
-
-系统特点
-- RBAC权限控制
-- 软删除
-- 全局异常处理
-- 统一响应结构
-- Query Builder动态查询
                 
 
-###项目亮点
+## 项目亮点
 - 基于FastAPI分层架构设计，实现API、Service、CRUD分离，提高代码可维护性和扩展性
 - 基于FastAPI实现RBAC权限控制系统，支持多角色访问
 - 封装动态查询系统，可以条件过滤、排序、分页，提高查询能力
@@ -100,3 +80,14 @@ Announcement模块
 - 引入日志系统，可进行日志记录
 - 使用SQLAlchemy ORM完成数据库操作
 - 使用Query Builder抽象通用查询逻辑，减少代码重复，提高开发效率
+- alembic数据库迁移
+
+
+
+
+
+## 项目启动方式
+1. 安装依赖：pip install -r requirements.txt
+2. 修改 .env文件
+3. 初始化数据库：alembic upgrade head
+4. 启动项目：uvicorn app.main:app --reload
